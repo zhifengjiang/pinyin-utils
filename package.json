@@ -1,6 +1,6 @@
 {
   "name": "pinyin-utils",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Get some information about one or more characters.",
   "main": "index.js",
   "scripts": {
@@ -29,7 +29,7 @@
   "devDependencies": {
     "coveralls": "^3.0.0",
     "istanbul": "^0.4.5",
-    "mocha": "^5.0.0",
+    "mocha": "^5.0.1",
     "mocha-lcov-reporter": "^1.3.0",
     "should": "^13.2.1"
   }
