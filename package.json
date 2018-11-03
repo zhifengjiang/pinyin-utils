@@ -14,21 +14,25 @@
   "bugs": {
     "url": "https://github.com/pepebecker/pinyin-utils/issues"
   },
-  "license": "MIT",
-  "author": "Pepe Becker <mail@pepebecker.com> (http://pepebecker.com)",
-  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/pepebecker/pinyin-utils.git"
   },
+  "license": "MIT",
+  "author": "Pepe Becker <mail@pepebecker.com> (http://pepebecker.com)",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
+    "build": "tsc -p .",
     "test": "mocha"
   },
   "dependencies": {
-    "trim": "0.0.1"
+    "trim": "0.0.1",
+    "@types/trim": "^0.1.0"
   },
   "devDependencies": {
     "mocha": "^5.2.0",
-    "should": "^13.2.1"
+    "should": "^13.2.1",
+    "typescript": "^3.1.6"
   }
 }

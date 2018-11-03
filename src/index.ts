@@ -1,40 +1,39 @@
 'use strict'
 
-const trim = require('trim')
+import trim from 'trim'
 
-const codepointToUnicode = codepoint => {
+const codepointToUnicode = (codepoint: string | number): string => {
 	if (typeof codepoint === 'string') {
 		codepoint = codepoint.replace('U+', '')
-		
 		if (!/^0x/.test(codepoint)) {
 			codepoint = '0x' + codepoint
 		}
+		codepoint = parseInt(codepoint)
 	}
-
 	return String.fromCodePoint(codepoint)
 }
 
-const capitalize = text => {
+const capitalize = (text: string): string => {
     return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
-const vovels = {
-	"a": ['ā', 'á', 'ǎ', 'à'],
-	"e": ['ē', 'é', 'ě', 'è'],
-	"i": ['ī', 'í', 'ǐ', 'ì'],
-	"o": ['ō', 'ó', 'ǒ', 'ò'],
-	"u": ['ū', 'ú', 'ǔ', 'ù'],
-	"ü": ['ǖ', 'ǘ', 'ǚ', 'ǜ'],
-	"m": ['m̄', 'ḿ', 'm̌', 'm̀'],
-	"n": ['n̄', 'ń', 'ň', 'ǹ']
+const vovels: { [key: string]: string[] } = {
+	a: ['ā', 'á', 'ǎ', 'à'],
+	e: ['ē', 'é', 'ě', 'è'],
+	i: ['ī', 'í', 'ǐ', 'ì'],
+	o: ['ō', 'ó', 'ǒ', 'ò'],
+	u: ['ū', 'ú', 'ǔ', 'ù'],
+	ü: ['ǖ', 'ǘ', 'ǚ', 'ǜ'],
+	m: ['m̄', 'ḿ', 'm̌', 'm̀'],
+	n: ['n̄', 'ń', 'ň', 'ǹ']
 }
 
-const getToneNumber = text => {
+const getToneNumber = (text: string) => {
 	text = text.toLowerCase()
 
 	const toneNumberRegex = /[a-zü](\d)/
 	if (toneNumberRegex.test(text)) {
-		return parseInt(text.match(toneNumberRegex)[1])
+		return parseInt((text.match(toneNumberRegex)||[])[1])
 	}
 
 	for (let v in vovels) {
@@ -48,7 +47,7 @@ const getToneNumber = text => {
 	return 5
 }
 
-const removeTone = text => {
+const removeTone = (text: string): string => {
 	// remove tone from pinyin with tone marks
 	for (let i in vovels) {
 		for (let t of vovels[i]) {
@@ -62,8 +61,8 @@ const removeTone = text => {
 	return text.replace(/\d/g, '')
 }
 
-const markToNumber = (syllables, fithTone = true) => {
-	const process = pinyin => {
+const markToNumber = (syllables: string | string[], fithTone: boolean = true) => {
+	const process = (pinyin: string) => {
 		if (trim(pinyin).length === 0) return pinyin
 		if (fithTone) {
 			return removeTone(pinyin) + getToneNumber(pinyin)
@@ -80,8 +79,8 @@ const markToNumber = (syllables, fithTone = true) => {
 	}
 }
 
-const numberToMark = syllables => {
-	const process = pinyin => {
+const numberToMark = (syllables: string | string[]) => {
+	const process = (pinyin: string) => {
 		if (trim(pinyin).length === 0) return pinyin
 
 		const tone = getToneNumber(pinyin)
@@ -117,4 +116,12 @@ const numberToMark = syllables => {
 	}
 }
 
-module.exports = {codepointToUnicode, capitalize, vovels, getToneNumber, removeTone, markToNumber, numberToMark}
+export {
+	codepointToUnicode,
+	capitalize,
+	vovels,
+	getToneNumber,
+	removeTone,
+	markToNumber,
+	numberToMark
+}

@@ -1,6 +1,6 @@
 'use strict'
 
-const utils = require('../index')
+const utils = require('..')
 const syllables = require('./syllables')
 
 describe('Codepoint to Unicode', () => {
