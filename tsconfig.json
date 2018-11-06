@@ -2,11 +2,18 @@
   "compilerOptions": {
     "target": "es6",
     "module": "commonjs",
-    "lib": ["es6", "dom"],
+    "lib": ["esnext", "dom"],
     "declaration": true,
-    "outDir": "lib",
-    "rootDir": "src",
     "strict": true,
-    "esModuleInterop": true
-  }
+    "esModuleInterop": true,
+    "outDir": "lib"
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "test",
+    "lib"
+  ]
 }

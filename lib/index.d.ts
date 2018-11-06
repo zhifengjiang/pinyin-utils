@@ -1,10 +1,7 @@
 declare const codepointToUnicode: (codepoint: string | number) => string;
-declare const capitalize: (text: string) => string;
-declare const vovels: {
-    [key: string]: string[];
-};
-declare const getToneNumber: (text: string) => number;
-declare const removeTone: (text: string) => string;
-declare const markToNumber: (syllables: string | string[], fithTone?: boolean) => string | string[];
-declare const numberToMark: (syllables: string | string[]) => string | string[];
-export { codepointToUnicode, capitalize, vovels, getToneNumber, removeTone, markToNumber, numberToMark };
+declare const tones: string[];
+declare const getToneNumber: (str: string) => number;
+declare const removeTone: (str: string) => string;
+declare const markToNumber: <T extends string | string[]>(syllables: T, fithTone?: boolean) => T;
+declare const numberToMark: <T extends string | string[]>(syllables: T) => T;
+export { codepointToUnicode, tones, getToneNumber, removeTone, markToNumber, numberToMark };

@@ -13,56 +13,27 @@ const codepointToUnicode = (codepoint: string | number): string => {
 	return String.fromCodePoint(codepoint)
 }
 
-const capitalize = (text: string): string => {
-    return text.charAt(0).toUpperCase() + text.slice(1);
-}
+// Four tones:  ̄  ́  ̌  ̀
+const tones = ['\u0304', '\u0301', '\u030c', '\u0300']
 
-const vovels: { [key: string]: string[] } = {
-	a: ['ā', 'á', 'ǎ', 'à'],
-	e: ['ē', 'é', 'ě', 'è'],
-	i: ['ī', 'í', 'ǐ', 'ì'],
-	o: ['ō', 'ó', 'ǒ', 'ò'],
-	u: ['ū', 'ú', 'ǔ', 'ù'],
-	ü: ['ǖ', 'ǘ', 'ǚ', 'ǜ'],
-	m: ['m̄', 'ḿ', 'm̌', 'm̀'],
-	n: ['n̄', 'ń', 'ň', 'ǹ']
-}
-
-const getToneNumber = (text: string) => {
-	text = text.toLowerCase()
-
-	const toneNumberRegex = /[a-zü](\d)/
-	if (toneNumberRegex.test(text)) {
-		return parseInt((text.match(toneNumberRegex)||[])[1])
+const getToneNumber = (str: string): number => {
+	// Check for tone number
+	const matches = str.match(/[a-zü](\d)/i)
+	if (matches) return +matches[1]
+	// Check for tone mark
+	for (let i = 0; i < tones.length; i++) {
+		if (str.normalize('NFD').match(tones[i])) return i + 1
 	}
-
-	for (let v in vovels) {
-		for (var i = 0; i < vovels[v].length; i++) {
-			if (text.match(vovels[v][i])) {
-				return i + 1
-			}
-		}
-	}
-
+	// Return 5 as default
 	return 5
 }
 
-const removeTone = (text: string): string => {
-	// remove tone from pinyin with tone marks
-	for (let i in vovels) {
-		for (let t of vovels[i]) {
-			if (text.match(t)) {
-				return text.replace(t, i)
-			}
-		}
-	}
-
-	// remove tone from pinyin with tone numbers
-	return text.replace(/\d/g, '')
+const removeTone = (str: string): string => {
+	return str.normalize('NFD').replace(/(\w)?(\u0304|\u0301|\u030c|\u0300|[1-5])/g, '$1')
 }
 
-const markToNumber = (syllables: string | string[], fithTone: boolean = true) => {
-	const process = (pinyin: string) => {
+const markToNumber = <T extends string | string[]>(syllables: T, fithTone: boolean = true): T => {
+	const process = (pinyin: string): string => {
 		if (trim(pinyin).length === 0) return pinyin
 		if (fithTone) {
 			return removeTone(pinyin) + getToneNumber(pinyin)
@@ -72,54 +43,43 @@ const markToNumber = (syllables: string | string[], fithTone: boolean = true) =>
 		}
 	}
 
-	if (Array.isArray(syllables)) {
-		return syllables.map(process)
-	} else {
-		return process(syllables)
-	}
+	if (typeof syllables === 'string') return <T>process(syllables)
+	if (Array.isArray(syllables)) return <T>syllables.map(process)
+	return syllables
 }
 
-const numberToMark = (syllables: string | string[]) => {
+const numberToMark = <T extends string | string[]>(syllables: T): T => {
 	const process = (pinyin: string) => {
 		if (trim(pinyin).length === 0) return pinyin
 
 		const tone = getToneNumber(pinyin)
 
-		pinyin = removeTone(pinyin)
-	
+		pinyin = removeTone(pinyin).normalize()
+
 		if (tone !== 5) {
-			const matchedNM = pinyin.match(/^[nm]$/)
-			if (matchedNM) {
-				const letter = matchedNM[matchedNM.length - 1]
-				pinyin = pinyin.replace(letter, vovels[letter][tone - 1])
-			} else {
-				const matchedVovels = pinyin.match(/[aeiouü]/g)
-				if (matchedVovels) {
-					let vovel = matchedVovels[matchedVovels.length-1]
-		
-					if (pinyin.match('ou')) vovel = 'o'
-					if (pinyin.match('a')) vovel = 'a'
-					if (pinyin.match('e')) vovel = 'e'
-		
-					pinyin = pinyin.replace(vovel, vovels[vovel][tone-1])
-				}
+			if (pinyin === 'm' || pinyin === 'n' || pinyin === 'M' || pinyin === 'N') {
+				return pinyin + tones[tone - 1]
+			}
+			const matchedVovels = pinyin.match(/[aeiouü]/gi)
+			if (matchedVovels) {
+				let vovel = matchedVovels[matchedVovels.length-1]
+				if (pinyin.match('ou')) vovel = 'o'
+				if (pinyin.match('a')) vovel = 'a'
+				if (pinyin.match('e')) vovel = 'e'
+				return pinyin.replace(vovel, vovel + tones[tone - 1])
 			}
 		}
-
 		return pinyin
 	}
 
-	if (Array.isArray(syllables)) {
-		return syllables.map(process)
-	} else {
-		return process(syllables)
-	}
+	if (typeof syllables === 'string') return <T>process(syllables)
+	if (Array.isArray(syllables)) return <T>syllables.map(process)
+	return syllables
 }
 
 export {
 	codepointToUnicode,
-	capitalize,
-	vovels,
+	tones,
 	getToneNumber,
 	removeTone,
 	markToNumber,
