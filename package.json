@@ -35,7 +35,7 @@
     "@types/should": "^13.0.0",
     "@types/trim": "^0.1.0",
     "mocha": "^5.2.0",
-    "should": "^13.2.1",
+    "should": "^13.2.3",
     "ts-node": "^7.0.1",
     "typescript": "^3.1.6"
   }
