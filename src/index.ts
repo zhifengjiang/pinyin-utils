@@ -29,7 +29,7 @@ const getToneNumber = (str: string): number => {
 }
 
 const removeTone = (str: string): string => {
-	return str.normalize('NFD').replace(/(\w)?(\u0304|\u0301|\u030c|\u0300|[1-5])/g, '$1')
+	return str.normalize('NFD').replace(/(\w)?(\u0304|\u0301|\u030c|\u0300|[1-5])/g, '$1').normalize('NFC')
 }
 
 const markToNumber = <T extends string | string[]>(syllables: T, fithTone: boolean = true): T => {
@@ -54,11 +54,11 @@ const numberToMark = <T extends string | string[]>(syllables: T): T => {
 
 		const tone = getToneNumber(pinyin)
 
-		pinyin = removeTone(pinyin).normalize()
+		pinyin = removeTone(pinyin)
 
 		if (tone !== 5) {
 			if (pinyin === 'm' || pinyin === 'n' || pinyin === 'M' || pinyin === 'N') {
-				return pinyin + tones[tone - 1]
+				return (pinyin + tones[tone - 1]).normalize('NFC')
 			}
 			const matchedVovels = pinyin.match(/[aeiouü]/gi)
 			if (matchedVovels) {
@@ -66,7 +66,7 @@ const numberToMark = <T extends string | string[]>(syllables: T): T => {
 				if (pinyin.match('ou')) vovel = 'o'
 				if (pinyin.match('a')) vovel = 'a'
 				if (pinyin.match('e')) vovel = 'e'
-				return pinyin.replace(vovel, vovel + tones[tone - 1])
+				return pinyin.replace(vovel, vovel + tones[tone - 1]).normalize('NFC')
 			}
 		}
 		return pinyin
