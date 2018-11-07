@@ -2,7 +2,7 @@
 
 import trim from 'trim'
 
-const codepointToUnicode = (codepoint: string | number): string => {
+export const codepointToUnicode = (codepoint: string | number): string => {
 	if (typeof codepoint === 'string') {
 		codepoint = codepoint.replace('U+', '')
 		if (!/^0x/.test(codepoint)) {
@@ -14,9 +14,9 @@ const codepointToUnicode = (codepoint: string | number): string => {
 }
 
 // Four tones:  ̄  ́  ̌  ̀
-const tones = ['\u0304', '\u0301', '\u030c', '\u0300']
+export const tones = ['\u0304', '\u0301', '\u030c', '\u0300']
 
-const getToneNumber = (str: string): number => {
+export const getToneNumber = (str: string): number => {
 	// Check for tone number
 	const matches = str.match(/[a-zü](\d)/i)
 	if (matches) return +matches[1]
@@ -28,11 +28,11 @@ const getToneNumber = (str: string): number => {
 	return 5
 }
 
-const removeTone = (str: string): string => {
+export const removeTone = (str: string): string => {
 	return str.normalize('NFD').replace(/(\w)?(\u0304|\u0301|\u030c|\u0300|[1-5])/g, '$1').normalize('NFC')
 }
 
-const markToNumber = <T extends string | string[]>(syllables: T, fithTone: boolean = true): T => {
+export const markToNumber = <T extends string | string[]>(syllables: T, fithTone: boolean = true): T => {
 	const process = (pinyin: string): string => {
 		if (trim(pinyin).length === 0) return pinyin
 		if (fithTone) {
@@ -48,7 +48,7 @@ const markToNumber = <T extends string | string[]>(syllables: T, fithTone: boole
 	return syllables
 }
 
-const numberToMark = <T extends string | string[]>(syllables: T): T => {
+export const numberToMark = <T extends string | string[]>(syllables: T): T => {
 	const process = (pinyin: string) => {
 		if (trim(pinyin).length === 0) return pinyin
 
@@ -75,13 +75,4 @@ const numberToMark = <T extends string | string[]>(syllables: T): T => {
 	if (typeof syllables === 'string') return <T>process(syllables)
 	if (Array.isArray(syllables)) return <T>syllables.map(process)
 	return syllables
-}
-
-export {
-	codepointToUnicode,
-	tones,
-	getToneNumber,
-	removeTone,
-	markToNumber,
-	numberToMark
 }
