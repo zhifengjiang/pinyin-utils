@@ -53,11 +53,10 @@ const markToNumber = (syllables, fithTone = true) => {
 const numberToMark = syllables => {
 	const process = pinyin => {
 		if (trim(pinyin).length === 0) return pinyin
-
+		pinyin = pinyin.replace('u:', 'ü')
 		const tone = getToneNumber(pinyin)
 
 		pinyin = removeTone(pinyin)
-	
 		if (tone !== 5) {
 			if (pinyin === 'm' || pinyin === 'n' || pinyin === 'M' || pinyin === 'N') {
 				return (pinyin + tones[tone - 1]).normalize('NFC')
